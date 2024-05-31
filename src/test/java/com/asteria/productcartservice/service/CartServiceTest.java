@@ -137,7 +137,6 @@ class CartServiceTest {
         assertThat(lineItem.getQuantity()).isEqualTo(2);
     }
 
-    // TODO: Test remove more products than quantity from cart
     @Test
     void removeProductFromCartWithQuantityHigherThanCurrentQuantity() {
         CartEntity cart = cartService.createCart();
