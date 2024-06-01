@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -71,23 +70,22 @@ class ProductServiceTest {
         ProductEntity savedProductOne = productService.createProduct(PRODUCT_NAME_ONE, PRODUCT_DESCRIPTION_ONE, PRODUCT_PRICE_ONE);
         ProductEntity savedProductTwo = productService.createProduct(PRODUCT_NAME_TWO, PRODUCT_DESCRIPTION_TWO, PRODUCT_PRICE_TWO);
 
-        Optional<ProductEntity> retreivedProductOne = productService.getProductById(savedProductOne.getId());
-        assertThat(retreivedProductOne).isPresent();
-        assertThat(retreivedProductOne.get().getName()).isEqualTo(PRODUCT_NAME_ONE);
-        assertThat(retreivedProductOne.get().getDescription()).isEqualTo(PRODUCT_DESCRIPTION_ONE);
-        assertThat(retreivedProductOne.get().getPrice()).isEqualTo(PRODUCT_PRICE_ONE);
+        ProductEntity retreivedProductOne = productService.getProductById(savedProductOne.getId());
+        assertThat(retreivedProductOne).isNotNull();
+        assertThat(retreivedProductOne.getName()).isEqualTo(PRODUCT_NAME_ONE);
+        assertThat(retreivedProductOne.getDescription()).isEqualTo(PRODUCT_DESCRIPTION_ONE);
+        assertThat(retreivedProductOne.getPrice()).isEqualTo(PRODUCT_PRICE_ONE);
 
-        Optional<ProductEntity> retreivedProductTwo = productService.getProductById(savedProductTwo.getId());
-        assertThat(retreivedProductTwo).isPresent();
-        assertThat(retreivedProductTwo.get().getName()).isEqualTo(PRODUCT_NAME_TWO);
-        assertThat(retreivedProductTwo.get().getDescription()).isEqualTo(PRODUCT_DESCRIPTION_TWO);
-        assertThat(retreivedProductTwo.get().getPrice()).isEqualTo(PRODUCT_PRICE_TWO);
+        ProductEntity retreivedProductTwo = productService.getProductById(savedProductTwo.getId());
+        assertThat(retreivedProductTwo).isNotNull();
+        assertThat(retreivedProductTwo.getName()).isEqualTo(PRODUCT_NAME_TWO);
+        assertThat(retreivedProductTwo.getDescription()).isEqualTo(PRODUCT_DESCRIPTION_TWO);
+        assertThat(retreivedProductTwo.getPrice()).isEqualTo(PRODUCT_PRICE_TWO);
     }
 
     @Test
     void getNonExistentProduct() {
-        Optional<ProductEntity> nonExistentProduct = productService.getProductById(1L);
-        assertThat(nonExistentProduct).isNotPresent();
+        assertThrows(EntityNotFoundException.class, () -> productService.deleteProduct(1L));
     }
 
     @Test

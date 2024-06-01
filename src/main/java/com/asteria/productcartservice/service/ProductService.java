@@ -1,15 +1,13 @@
 package com.asteria.productcartservice.service;
 
-import com.asteria.productcartservice.repository.entity.ProductEntity;
 import com.asteria.productcartservice.repository.ProductRepository;
-
+import com.asteria.productcartservice.repository.entity.ProductEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -37,8 +35,9 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<ProductEntity> getProductById(Long id) {
-        return productRepository.findById(id);
+    public ProductEntity getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
     }
 
     public void deleteProduct(Long id) {

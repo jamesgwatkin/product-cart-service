@@ -34,7 +34,7 @@ tasks.register("openApiGenerateProduct", GenerateTask) {
 			interfaceOnly : "true",
 			dateLibrary : "java8",
 			apiNamePrefix: "Product",
-			useJakartaEe: "true"
+			useJakartaEe: "true",
 	]
 }
 
@@ -48,7 +48,7 @@ tasks.register("openApiGenerateCart", GenerateTask) {
 			interfaceOnly : "true",
 			dateLibrary : "java8",
 			apiNamePrefix: "Order",
-			useJakartaEe: "true"
+			useJakartaEe: "true",
 	]
 }
 
