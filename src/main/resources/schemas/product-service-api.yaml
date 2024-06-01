@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: Product API
+  description: CRUD Operations for Product
+  version: 0.1.0
+
+paths:
+  /product:
+    post:
+      summary: Create a Product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductId'
+      responses:
+        200:
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductId'
+  /product/{productId}:
+    put:
+      summary: Update a Product
+      operationId: updateProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The id of the product to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        204:
+          description: UPDATED
+    delete:
+      summary: Delete a Product
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The id of the product to delete
+          schema:
+            type: integer
+      responses:
+        204:
+          description: DELETED
+    get:
+      summary: Get a Product
+      operationId: getProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The id of the product to delete
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+components:
+  schemas:
+    Product:
+      $ref: './models/product.yaml'
+    ProductId:
+      type: object
+      properties:
+        id:
+          type: integer

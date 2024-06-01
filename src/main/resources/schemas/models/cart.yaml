@@ -1,0 +1,8 @@
+type: object
+properties:
+  total:
+    type: number
+  lineItems:
+    type: array
+    items:
+      $ref: './cart-line-items.yaml'
