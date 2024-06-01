@@ -6,16 +6,17 @@ import com.asteria.productcartservice.repository.entity.CartEntity;
 import com.asteria.productcartservice.repository.entity.CartLineItemEntity;
 import com.asteria.productcartservice.repository.entity.ProductEntity;
 import jakarta.persistence.EntityNotFoundException;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -23,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
 class CartServiceTest {
 
     private static final String PRODUCT_NAME_ONE = "Product One";
@@ -193,5 +193,39 @@ class CartServiceTest {
     void getNonExistingCart() {
         Optional<CartEntity> retrievedCart = cartService.getCartById(1L);
         assertThat(retrievedCart).isNotPresent();
+    }
+
+    @Test
+    void autoCartRemoval() {
+        CartEntity cartOne = cartService.createCart();
+        cartService.addProduct(cartOne, productIdOne, 4);
+
+        CartEntity cartTwo = cartService.createCart();
+        cartService.addProduct(cartTwo, productIdTwo, 4);
+        assertThat(cartRepository.findAll()).hasSize(2);
+
+        // Wait for 30 seconds
+        Awaitility.await()
+                .pollDelay(30, TimeUnit.SECONDS)
+                .atMost(35, TimeUnit.SECONDS) // Timeout should be greater than poll delay
+                .until(() -> true);
+
+        cartService.getCartById(cartTwo.getId());
+
+        Awaitility.await()
+                .atMost(1, TimeUnit.MINUTES)
+                .until(() -> cartRepository.findAll().size() == 1);
+
+        assertThat(cartService.getCartById(cartOne.getId())).isNotPresent();
+        assertThat(cartService.getCartById(cartTwo.getId())).isPresent();
+
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .until(() -> cartRepository.findAll().isEmpty());
+
+        assertThat(cartService.getCartById(cartOne.getId())).isNotPresent();
+        assertThat(cartService.getCartById(cartTwo.getId())).isNotPresent();
+        assertThat(cartRepository.findAll()).isEmpty();
+
     }
 }

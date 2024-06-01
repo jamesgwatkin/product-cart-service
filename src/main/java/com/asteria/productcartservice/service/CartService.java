@@ -8,9 +8,12 @@ import com.asteria.productcartservice.repository.entity.CartLineItemEntity;
 import com.asteria.productcartservice.repository.entity.ProductEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +26,14 @@ public class CartService {
 
     private final CartLineItemRepository cartLineItemRepository;
 
+    private final long cartExpirationTimeInMin;
+
     @Autowired
-    public CartService(CartRepository cartRepository, ProductRepository productRepository, CartLineItemRepository cartLineItemRepository) {
+    public CartService(CartRepository cartRepository, ProductRepository productRepository, CartLineItemRepository cartLineItemRepository, @Value("${cart.expiration.time.min}") long cartExpirationTimeInMin) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.cartLineItemRepository = cartLineItemRepository;
+        this.cartExpirationTimeInMin = cartExpirationTimeInMin;
     }
 
     public CartEntity createCart() {
@@ -50,6 +56,7 @@ public class CartService {
         } else {
             updateExistingItemQuantity(existingItem, quantity);
         }
+        setModifiedTime(cartEntity);
 
         return cartRepository.save(cartEntity);
     }
@@ -72,6 +79,7 @@ public class CartService {
             cartLineItemRepository.delete(existingItem);
             cartEntity.getLineItems().remove(existingItem);
         }
+        setModifiedTime(cartEntity);
 
         return cartRepository.save(cartEntity);
     }
@@ -81,11 +89,31 @@ public class CartService {
         List<CartLineItemEntity> lineItems = cartEntity.getLineItems();
         cartLineItemRepository.deleteAll(lineItems);
         cartEntity.getLineItems().clear();
+        setModifiedTime(cartEntity);
         return cartRepository.save(cartEntity);
     }
 
     public Optional<CartEntity> getCartById(Long cartId) {
-        return cartRepository.findById(cartId);
+        Optional<CartEntity> cart = cartRepository.findById(cartId);
+        cart.ifPresent(c -> {
+            this.setModifiedTime(c);
+            cartRepository.save(c);
+        });
+        return cart;
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 2000) // Run every 2 seconds
+    public void deleteExpiredEntities() {
+        LocalDateTime expirationTime = LocalDateTime.now().minusMinutes(cartExpirationTimeInMin);
+        List<CartEntity> cartsForDeletion = cartRepository.getAllExpired(expirationTime);
+        for (CartEntity cartEntity : cartsForDeletion) {
+            List<CartLineItemEntity> lineItems = cartEntity.getLineItems();
+            cartLineItemRepository.deleteAll(lineItems);
+            cartEntity.getLineItems().clear();
+            cartRepository.save(cartEntity);
+        }
+        cartRepository.deleteAll(cartsForDeletion);
     }
 
     private CartLineItemEntity findCartLineItem(CartEntity cartEntity, Long productId) {
@@ -104,5 +132,9 @@ public class CartService {
     private void updateExistingItemQuantity(CartLineItemEntity existingItem, int quantity) {
         existingItem.setQuantity(existingItem.getQuantity() + quantity);
         cartLineItemRepository.save(existingItem);
+    }
+
+    private void setModifiedTime(CartEntity cart) {
+        cart.setModifiedAt(LocalDateTime.now());
     }
 }

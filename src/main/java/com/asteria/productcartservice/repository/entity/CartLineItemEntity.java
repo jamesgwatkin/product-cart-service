@@ -8,9 +8,9 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "cart")
 @EqualsAndHashCode
-@Entity(name = "cart_line_item")
+@Entity(name = "cart_line_items")
 @Table(name = "cart_line_items")
 public class CartLineItemEntity {
 

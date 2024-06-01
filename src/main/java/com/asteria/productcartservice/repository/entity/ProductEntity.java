@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Getter
 @ToString
 @EqualsAndHashCode
-@Entity(name = "product")
+@Entity(name = "products")
 @Table(name = "products")
 public class ProductEntity {
     @Id

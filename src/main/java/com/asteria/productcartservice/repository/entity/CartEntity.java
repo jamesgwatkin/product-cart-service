@@ -6,14 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @ToString
 @EqualsAndHashCode
-@Entity(name = "cart")
+@Entity(name = "carts")
 @Table(name = "carts")
 public class CartEntity {
     @Id
@@ -24,4 +24,11 @@ public class CartEntity {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartLineItemEntity> lineItems = new ArrayList<>();
 
+    @Setter
+    private LocalDateTime modifiedAt;
+
+    public CartEntity() {
+        super();
+        this.modifiedAt = LocalDateTime.now();
+    }
 }
