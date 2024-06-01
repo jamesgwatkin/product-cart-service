@@ -1,3 +1,5 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.0'
@@ -22,7 +24,7 @@ repositories {
 	mavenCentral()
 }
 
-tasks.register("openApiGenerateProduct", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+tasks.register("openApiGenerateProduct", GenerateTask) {
 	generatorName = "spring"
 	inputSpec = "${projectDir}/src/main/resources/schemas/product-service-api.yaml"
 	outputDir = layout.buildDirectory.dir("generated").get().asFile.toString()
@@ -36,7 +38,7 @@ tasks.register("openApiGenerateProduct", org.openapitools.generator.gradle.plugi
 	]
 }
 
-tasks.register("openApiGenerateCart", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+tasks.register("openApiGenerateCart", GenerateTask) {
 	generatorName = "spring"
 	inputSpec = "${projectDir}/src/main/resources/schemas/cart-service-api.yaml"
 	outputDir = layout.buildDirectory.dir("generated").get().asFile.toString()
