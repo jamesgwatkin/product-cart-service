@@ -1,0 +1,132 @@
+openapi: 3.1.0
+info:
+  title: Cart API
+  description: Operations for Cart
+  version: 0.1.0
+paths:
+  /cart:
+    post:
+      summary: Create a Cart
+      operationId: createCart
+      responses:
+        200:
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartId'
+  /cart/{cartId}:
+    get:
+      summary: Gets the cart
+      operationId: getCart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: The id of the cart to get
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+  /cart/{cartId}/products:
+    get:
+      summary: Gets the products in the cart
+      operationId: getCartProducts
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: The id of the cart to get products for
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /cart/{cartId}/add-product/{productId}:
+    put:
+      summary: Add a product to the cart with the specified quantity
+      operationId: addProductToCart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: The id of the cart to update
+          schema:
+            type: integer
+        - name: productId
+          in: path
+          required: true
+          description: The id of the product to add
+          schema:
+            type: integer
+        - name: quantity
+          in: query
+          required: true
+          description: The quantity to add
+          schema:
+            type: integer
+      responses:
+        204:
+          description: UPDATED
+  /cart/{cartId}/remove-product/{productId}:
+    put:
+      summary: Remove a product to the cart with the specified quantity
+      operationId: removeProductFromCart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: The id of the cart to update
+          schema:
+            type: integer
+        - name: productId
+          in: path
+          required: true
+          description: The id of the product to add
+          schema:
+            type: integer
+        - name: quantity
+          in: query
+          required: true
+          description: The quantity to remove
+          schema:
+            type: integer
+      responses:
+        204:
+          description: UPDATED
+  /cart/{cartId}/clear:
+    put:
+      summary: Removes all products from the cart
+      operationId: clearCart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: The id of the cart to update
+          schema:
+            type: integer
+      responses:
+        204:
+          description: UPDATED
+components:
+  schemas:
+    Product:
+      $ref: './models/product.yaml'
+    Cart:
+      $ref: './models/cart.yaml'
+    CartId:
+      type: object
+      properties:
+        id:
+          type: integer

@@ -1,7 +1,10 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.openapi.generator' version "7.6.0"
 }
 
 group = 'com.asteria'
@@ -21,9 +24,59 @@ repositories {
 	mavenCentral()
 }
 
+tasks.register("openApiGenerateProduct", GenerateTask) {
+	generatorName = "spring"
+	inputSpec = "${projectDir}/src/main/resources/schemas/product-service-api.yaml"
+	outputDir = layout.buildDirectory.dir("generated").get().asFile.toString()
+	apiPackage = "com.asteria.productcartservice.product.api"
+	modelPackage = "com.asteria.productcartservice.product.model"
+	configOptions = [
+			interfaceOnly : "true",
+			dateLibrary : "java8",
+			apiNamePrefix: "Product",
+			useJakartaEe: "true"
+	]
+}
+
+tasks.register("openApiGenerateCart", GenerateTask) {
+	generatorName = "spring"
+	inputSpec = "${projectDir}/src/main/resources/schemas/cart-service-api.yaml"
+	outputDir = layout.buildDirectory.dir("generated").get().asFile.toString()
+	apiPackage = "com.asteria.productcartservice.cart.api"
+	modelPackage = "com.asteria.productcartservice.cart.model"
+	configOptions = [
+			interfaceOnly : "true",
+			dateLibrary : "java8",
+			apiNamePrefix: "Order",
+			useJakartaEe: "true"
+	]
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir layout.buildDirectory.dir("generated/src/main/java").get().asFile
+		}
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	sourceCompatibility = '21'
+	targetCompatibility = '21'
+}
+
+tasks.named("compileJava") {
+	dependsOn(tasks.named("openApiGenerateProduct"))
+	dependsOn(tasks.named("openApiGenerateCart"))
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.22'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
