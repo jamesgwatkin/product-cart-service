@@ -43,7 +43,7 @@ paths:
       responses:
         204:
           description: UPDATED
-        '404':
+        404:
           description: Not Found
           content:
             application/json:
@@ -63,7 +63,7 @@ paths:
       responses:
         204:
           description: DELETED
-        '404':
+        404:
           description: Not Found
           content:
             application/json:
@@ -87,7 +87,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
-        '404':
+        404:
           description: Not Found
           content:
             application/json:
