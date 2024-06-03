@@ -5,4 +5,17 @@ properties:
   lineItems:
     type: array
     items:
-      $ref: './cart-line-items.yaml'
+      type: object
+      properties:
+        quantity:
+          type: integer
+        product:
+          type: object
+          properties:
+            description:
+              type: string
+            name:
+              type: string
+            price:
+              type: number
+
