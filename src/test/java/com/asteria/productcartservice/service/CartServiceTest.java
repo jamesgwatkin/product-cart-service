@@ -1,11 +1,12 @@
 package com.asteria.productcartservice.service;
 
+import com.asteria.productcartservice.exception.CartNotFoundException;
+import com.asteria.productcartservice.exception.ProductNotFoundException;
 import com.asteria.productcartservice.repository.CartLineItemRepository;
 import com.asteria.productcartservice.repository.CartRepository;
 import com.asteria.productcartservice.repository.entity.CartEntity;
 import com.asteria.productcartservice.repository.entity.CartLineItemEntity;
 import com.asteria.productcartservice.repository.entity.ProductEntity;
-import jakarta.persistence.EntityNotFoundException;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +91,7 @@ class CartServiceTest {
     @Test
     void addNonExistentProductToCart() {
         CartEntity cart = cartService.createCart();
-        assertThrows(EntityNotFoundException.class, () -> cartService.addProduct(cart, 1L, 4));
+        assertThrows(ProductNotFoundException.class, () -> cartService.addProduct(cart, 1L, 4));
     }
 
     @Test
@@ -156,11 +157,11 @@ class CartServiceTest {
     @Test
     void removeProductFromCartWhenProductNotInCart() {
         CartEntity cart = cartService.createCart();
-        assertThrows(EntityNotFoundException.class, () -> cartService.removeProduct(cart, 1L, 2));
+        assertThrows(ProductNotFoundException.class, () -> cartService.removeProduct(cart, 1L, 2));
 
         CartEntity updatedCart = cartService.addProduct(cart, productIdOne, 4);
         Long differentProductId = productIdOne + 4L;
-        assertThrows(EntityNotFoundException.class, () -> cartService.removeProduct(updatedCart, differentProductId, 2));
+        assertThrows(ProductNotFoundException.class, () -> cartService.removeProduct(updatedCart, differentProductId, 2));
     }
 
     @Test
@@ -190,7 +191,7 @@ class CartServiceTest {
 
     @Test
     void getNonExistingCart() {
-        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(1L));
+        assertThrows(CartNotFoundException.class, () -> cartService.getCartById(1L));
     }
 
     @Test
@@ -216,15 +217,15 @@ class CartServiceTest {
 
         Long cartOneId = cartOne.getId();
         Long cartTwoId = cartTwo.getId();
-        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(cartOneId));
+        assertThrows(CartNotFoundException.class, () -> cartService.getCartById(cartOneId));
         assertThat(cartService.getCartById(cartTwoId)).isNotNull();
 
         Awaitility.await()
                 .atMost(2, TimeUnit.MINUTES)
                 .until(() -> cartRepository.findAll().isEmpty());
 
-        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(cartOneId));
-        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(cartTwoId));
+        assertThrows(CartNotFoundException.class, () -> cartService.getCartById(cartOneId));
+        assertThrows(CartNotFoundException.class, () -> cartService.getCartById(cartTwoId));
 
         assertThat(cartRepository.findAll()).isEmpty();
 

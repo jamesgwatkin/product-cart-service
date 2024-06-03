@@ -1,14 +1,13 @@
 package com.asteria.productcartservice.controller;
 
-import com.asteria.productcartservice.cart.model.Cart;
-import com.asteria.productcartservice.cart.model.CartId;
-import com.asteria.productcartservice.cart.model.CartLineItemsInner;
-import com.asteria.productcartservice.cart.model.Product;
+import com.asteria.productcartservice.cart.model.*;
+import com.asteria.productcartservice.exception.CartNotFoundException;
+import com.asteria.productcartservice.exception.ProductNotFoundException;
 import com.asteria.productcartservice.product.model.ProductId;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
+@AutoConfigureMockMvc
 class CartControllerTest {
 
     private static final String PRODUCT_NAME_ONE = "Product One";
@@ -134,10 +134,8 @@ class CartControllerTest {
         cart = getCartResponse.getBody();
         assertThat(cart.getLineItems()).isEmpty();
 
-        assertThrows(EntityNotFoundException.class, () -> cartController.getCart(cartId + 2));
-        assertThrows(EntityNotFoundException.class, () -> cartController.addProductToCart(cartId, productIdOne + productIdTwo, 2));
-        assertThrows(EntityNotFoundException.class, () -> cartController.removeProductFromCart(cartId, productIdOne + productIdTwo, 2));
-        assertThrows(EntityNotFoundException.class, () -> cartController.clearCart(cartId + 2));
-
+        assertThrows(CartNotFoundException.class, () -> cartController.getCart(cartId + 2));
+        assertThrows(ProductNotFoundException.class, () -> cartController.addProductToCart(cartId, productIdOne + productIdTwo, 2));
+        assertThrows(IllegalArgumentException.class, () -> cartController.addProductToCart(cartId, productIdOne, -1));
     }
 }

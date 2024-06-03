@@ -1,12 +1,13 @@
 package com.asteria.productcartservice.service;
 
+import com.asteria.productcartservice.exception.CartNotFoundException;
+import com.asteria.productcartservice.exception.ProductNotFoundException;
 import com.asteria.productcartservice.repository.CartLineItemRepository;
 import com.asteria.productcartservice.repository.CartRepository;
 import com.asteria.productcartservice.repository.ProductRepository;
 import com.asteria.productcartservice.repository.entity.CartEntity;
 import com.asteria.productcartservice.repository.entity.CartLineItemEntity;
 import com.asteria.productcartservice.repository.entity.ProductEntity;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,7 +48,7 @@ public class CartService {
         }
 
         ProductEntity productEntity = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         CartLineItemEntity existingItem = findCartLineItem(cartEntity, productId);
 
@@ -69,7 +70,7 @@ public class CartService {
 
         CartLineItemEntity existingItem = findCartLineItem(cartEntity, productId);
         if (existingItem == null) {
-            throw new EntityNotFoundException("Product not in cart");
+            throw new ProductNotFoundException("Product not in cart");
         }
 
         if (existingItem.getQuantity() - quantity > 0) {
@@ -100,7 +101,7 @@ public class CartService {
             cartRepository.save(cart.get());
             return cart.get();
         } else {
-            throw new EntityNotFoundException("Cart with id " + cartId + " not found");
+            throw new CartNotFoundException("Cart with id " + cartId + " not found");
         }
     }
 

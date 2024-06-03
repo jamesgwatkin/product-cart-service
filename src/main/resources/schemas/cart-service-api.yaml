@@ -100,7 +100,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CartErrorResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/CartErrorResponse'
+                  - $ref: '#/components/schemas/InvalidQuantityErrorResponse'
   /cart/{cartId}/remove-product/{productId}:
     put:
       summary: Remove a product to the cart with the specified quantity
@@ -134,7 +136,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CartErrorResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/CartErrorResponse'
+                  - $ref: '#/components/schemas/InvalidQuantityErrorResponse'
   /cart/{cartId}/clear:
     put:
       summary: Removes all products from the cart
@@ -169,4 +173,6 @@ components:
           type: integer
           format: int64
     CartErrorResponse:
+      $ref: './models/error.yaml'
+    InvalidQuantityErrorResponse:
       $ref: './models/error.yaml'

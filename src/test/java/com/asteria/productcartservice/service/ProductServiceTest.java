@@ -1,7 +1,7 @@
 package com.asteria.productcartservice.service;
 
+import com.asteria.productcartservice.exception.ProductNotFoundException;
 import com.asteria.productcartservice.repository.entity.ProductEntity;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +62,7 @@ class ProductServiceTest {
     @Test
     void testUpdateProductWithoutId() {
         ProductEntity product = new ProductEntity(PRODUCT_NAME_ONE, PRODUCT_DESCRIPTION_ONE, PRODUCT_PRICE_ONE);
-        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(product));
+        assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(product));
     }
 
     @Test
@@ -70,22 +70,22 @@ class ProductServiceTest {
         ProductEntity savedProductOne = productService.createProduct(PRODUCT_NAME_ONE, PRODUCT_DESCRIPTION_ONE, PRODUCT_PRICE_ONE);
         ProductEntity savedProductTwo = productService.createProduct(PRODUCT_NAME_TWO, PRODUCT_DESCRIPTION_TWO, PRODUCT_PRICE_TWO);
 
-        ProductEntity retreivedProductOne = productService.getProductById(savedProductOne.getId());
-        assertThat(retreivedProductOne).isNotNull();
-        assertThat(retreivedProductOne.getName()).isEqualTo(PRODUCT_NAME_ONE);
-        assertThat(retreivedProductOne.getDescription()).isEqualTo(PRODUCT_DESCRIPTION_ONE);
-        assertThat(retreivedProductOne.getPrice()).isEqualTo(PRODUCT_PRICE_ONE);
+        ProductEntity retrievedProductOne = productService.getProductById(savedProductOne.getId());
+        assertThat(retrievedProductOne).isNotNull();
+        assertThat(retrievedProductOne.getName()).isEqualTo(PRODUCT_NAME_ONE);
+        assertThat(retrievedProductOne.getDescription()).isEqualTo(PRODUCT_DESCRIPTION_ONE);
+        assertThat(retrievedProductOne.getPrice()).isEqualTo(PRODUCT_PRICE_ONE);
 
-        ProductEntity retreivedProductTwo = productService.getProductById(savedProductTwo.getId());
-        assertThat(retreivedProductTwo).isNotNull();
-        assertThat(retreivedProductTwo.getName()).isEqualTo(PRODUCT_NAME_TWO);
-        assertThat(retreivedProductTwo.getDescription()).isEqualTo(PRODUCT_DESCRIPTION_TWO);
-        assertThat(retreivedProductTwo.getPrice()).isEqualTo(PRODUCT_PRICE_TWO);
+        ProductEntity retrievedProductTwo = productService.getProductById(savedProductTwo.getId());
+        assertThat(retrievedProductTwo).isNotNull();
+        assertThat(retrievedProductTwo.getName()).isEqualTo(PRODUCT_NAME_TWO);
+        assertThat(retrievedProductTwo.getDescription()).isEqualTo(PRODUCT_DESCRIPTION_TWO);
+        assertThat(retrievedProductTwo.getPrice()).isEqualTo(PRODUCT_PRICE_TWO);
     }
 
     @Test
     void getNonExistentProduct() {
-        assertThrows(EntityNotFoundException.class, () -> productService.deleteProduct(1L));
+        assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(1L));
     }
 
     @Test
@@ -116,6 +116,6 @@ class ProductServiceTest {
 
     @Test
     void deleteNonExistentProduct() {
-        assertThrows(EntityNotFoundException.class, () -> productService.deleteProduct(1L));
+        assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(1L));
     }
 }
