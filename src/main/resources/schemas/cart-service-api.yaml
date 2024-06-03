@@ -34,6 +34,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartErrorResponse'
   /cart/{cartId}/products:
     get:
       summary: Gets the products in the cart
@@ -55,6 +61,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartErrorResponse'
   /cart/{cartId}/add-product/{productId}:
     put:
       summary: Add a product to the cart with the specified quantity
@@ -83,6 +95,12 @@ paths:
       responses:
         204:
           description: UPDATED
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartErrorResponse'
   /cart/{cartId}/remove-product/{productId}:
     put:
       summary: Remove a product to the cart with the specified quantity
@@ -111,6 +129,12 @@ paths:
       responses:
         204:
           description: UPDATED
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartErrorResponse'
   /cart/{cartId}/clear:
     put:
       summary: Removes all products from the cart
@@ -126,6 +150,12 @@ paths:
       responses:
         204:
           description: UPDATED
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartErrorResponse'
 components:
   schemas:
     Product:
@@ -138,3 +168,5 @@ components:
         id:
           type: integer
           format: int64
+    CartErrorResponse:
+      $ref: './models/error.yaml'
