@@ -21,9 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductControllerTest {
 
     private static final String PRODUCT_NAME_ONE = "Product One";
-
     private static final String PRODUCT_DESCRIPTION_ONE = "Product Description One";
-
     private static final BigDecimal PRODUCT_PRICE_ONE = BigDecimal.valueOf(19.99);
 
     @Autowired

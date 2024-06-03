@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -185,14 +184,13 @@ class CartServiceTest {
     @Test
     void getCart() {
         CartEntity cart = cartService.createCart();
-        Optional<CartEntity> retrievedCart = cartService.getCartById(cart.getId());
-        assertThat(retrievedCart).isPresent();
+        CartEntity retrievedCart = cartService.getCartById(cart.getId());
+        assertThat(retrievedCart).isNotNull();
     }
 
     @Test
     void getNonExistingCart() {
-        Optional<CartEntity> retrievedCart = cartService.getCartById(1L);
-        assertThat(retrievedCart).isNotPresent();
+        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(1L));
     }
 
     @Test
@@ -216,15 +214,18 @@ class CartServiceTest {
                 .atMost(1, TimeUnit.MINUTES)
                 .until(() -> cartRepository.findAll().size() == 1);
 
-        assertThat(cartService.getCartById(cartOne.getId())).isNotPresent();
-        assertThat(cartService.getCartById(cartTwo.getId())).isPresent();
+        Long cartOneId = cartOne.getId();
+        Long cartTwoId = cartTwo.getId();
+        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(cartOneId));
+        assertThat(cartService.getCartById(cartTwoId)).isNotNull();
 
         Awaitility.await()
                 .atMost(2, TimeUnit.MINUTES)
                 .until(() -> cartRepository.findAll().isEmpty());
 
-        assertThat(cartService.getCartById(cartOne.getId())).isNotPresent();
-        assertThat(cartService.getCartById(cartTwo.getId())).isNotPresent();
+        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(cartOneId));
+        assertThrows(EntityNotFoundException.class, () -> cartService.getCartById(cartTwoId));
+
         assertThat(cartRepository.findAll()).isEmpty();
 
     }

@@ -93,18 +93,20 @@ public class CartService {
         return cartRepository.save(cartEntity);
     }
 
-    public Optional<CartEntity> getCartById(Long cartId) {
+    public CartEntity getCartById(Long cartId) {
         Optional<CartEntity> cart = cartRepository.findById(cartId);
-        cart.ifPresent(c -> {
-            this.setModifiedTime(c);
-            cartRepository.save(c);
-        });
-        return cart;
+        if (cart.isPresent()) {
+            this.setModifiedTime(cart.get());
+            cartRepository.save(cart.get());
+            return cart.get();
+        } else {
+            throw new EntityNotFoundException("Cart with id " + cartId + " not found");
+        }
     }
 
     @Transactional
     @Scheduled(fixedRate = 2000) // Run every 2 seconds
-    public void deleteExpiredEntities() {
+    public void deleteExpiredCartEntities() {
         LocalDateTime expirationTime = LocalDateTime.now().minusMinutes(cartExpirationTimeInMin);
         List<CartEntity> cartsForDeletion = cartRepository.getAllExpired(expirationTime);
         for (CartEntity cartEntity : cartsForDeletion) {
