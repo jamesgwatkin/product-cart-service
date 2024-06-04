@@ -23,4 +23,5 @@ To run the tests you can use the command `./gradlew clean test`
 ## Next Steps
 * Move transformation logic in the facade layer into its own layer, alternatively we could use a mapping library such as **ModelMapper** or **Orika**
 * Add additional endpoint to get all products to assist with adding products to the cart
-* Add validations and size constraints on the data
+* Add validations and size and format constraints on the data
+* Secure the DB connection details, so they are retrieved from a secure parameter store
