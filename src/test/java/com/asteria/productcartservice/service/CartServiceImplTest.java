@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class CartServiceTest {
+class CartServiceImplTest {
 
     private static final String PRODUCT_NAME_ONE = "Product One";
     private static final String PRODUCT_NAME_TWO = "Product Two";
