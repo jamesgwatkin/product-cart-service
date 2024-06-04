@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class ProductServiceTest {
+class ProductServiceImplTest {
 
     private static final String PRODUCT_NAME_ONE = "Product One";
     private static final String PRODUCT_NAME_TWO = "Product Two";
