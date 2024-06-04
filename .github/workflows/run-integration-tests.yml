@@ -22,9 +22,7 @@ jobs:
       - name: Run Product Cart Service
         run: docker-compose up
       - name: Wait for 10 seconds
-        uses: actions/starter-workflows/.github/actions/sleep@main
-        with:
-          time: 10s
+        run: sleep 10s
       - name: Run Integration Tests
         run: ./gradlew integrationTest
       - name: Stop Service and Remove
