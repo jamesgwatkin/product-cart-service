@@ -8,6 +8,8 @@ import com.asteria.productcartservice.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +64,7 @@ public class CartFacadeImpl implements CartFacade {
     private Cart transformCart(CartEntity cart) {
         Cart transformedCart = new Cart();
         List<CartLineItemsInner> responseLineItems = new ArrayList<>();
+        BigDecimal total = BigDecimal.valueOf(0.00);
         for(CartLineItemEntity lineItem:cart.getLineItems()) {
             CartLineItemsInner responseCartLineItems = new CartLineItemsInner();
             responseCartLineItems.setQuantity(lineItem.getQuantity());
@@ -71,7 +74,10 @@ public class CartFacadeImpl implements CartFacade {
             responseProduct.description(lineItem.getProduct().getDescription());
             responseCartLineItems.product(responseProduct);
             responseLineItems.add(responseCartLineItems);
+            BigDecimal lineItemTotalPrice = lineItem.getProduct().getPrice().multiply(BigDecimal.valueOf(lineItem.getQuantity()));
+            total = total.add(lineItemTotalPrice);
         }
+        transformedCart.setTotal(total.setScale(2, RoundingMode.CEILING));
         transformedCart.setLineItems(responseLineItems);
         return transformedCart;
     }

@@ -12,11 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +66,7 @@ class CartFacadeImplTest {
         Cart result = cartFacade.getCart(1L);
 
         assertNotNull(result);
+        assertEquals(BigDecimal.valueOf(20.00).setScale(2, RoundingMode.CEILING), result.getTotal());
         assertEquals(1, result.getLineItems().size());
         CartLineItemsInner lineItem = result.getLineItems().getFirst();
         assertEquals(2, lineItem.getQuantity());
