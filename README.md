@@ -25,3 +25,4 @@ To run the tests you can use the command `./gradlew clean test`
 * Add additional endpoint to get all products to assist with adding products to the cart
 * Add validations and size and format constraints on the data
 * Secure the DB connection details, so they are retrieved from a secure parameter store
+* Add logging for easier support and maintenance
